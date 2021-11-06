@@ -1,5 +1,5 @@
 const config = require('../config');
-const initDb = require(config.ORM_LAYER_PATH);
+const initDb = require(config.aws.ormLayerPath);
 
 let db = null;
 
