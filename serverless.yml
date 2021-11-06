@@ -7,20 +7,24 @@ app: tally-backend
 org: aroger7
 
 frameworkVersion: '2'
+useDotenv: true
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   iamRoleStatements:
     - Effect: 'Allow'
       Action:
         - 'secretsmanager:GetSecretValue'
       Resource: '*'
+  environment:
+    ORM_LAYER_PATH: ${env:ORM_LAYER_PATH, '/opt/db'}
+    DB_SECRET_NAME: ${env:DB_SECRET_NAME, param:DB_SECRET_NAME}
 
 functions:
   statsApi:
     handler: index.handler
-    name: ${self:provider.stage}-stats-api-function
+    name: ${sls:stage}-stats-api-function
     events:
       - http:
           path: graphql
@@ -28,4 +32,4 @@ functions:
           cors: true
           private: false
     layers:
-      - arn:aws:lambda:${opt:region, 'us-east-1'}:#{AWS::AccountId}:layer:${opt:stage, 'dev'}-orm-layer:latest
+      - arn:aws:lambda:${opt:region, 'us-east-1'}:#{AWS::AccountId}:layer:${sls:stage}-orm-layer:latest

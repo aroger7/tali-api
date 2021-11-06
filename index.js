@@ -1,3 +1,5 @@
+const config = require('./config');
+
 const middy = require('@middy/core');
 const AWS = require('aws-sdk');
 const secretsManager = require('@middy/secrets-manager');
@@ -8,7 +10,6 @@ const { resolver } = require('graphql-sequelize');
 const { createContext, EXPECTED_OPTIONS_KEY } = require('dataloader-sequelize');
 
 const { getDatabase } = require('./middleware/db');
-const config = require('./config');
 const typeDefs = require('./typeDefs');
 const resolvers = require('./resolvers');
 
@@ -48,7 +49,7 @@ const server = new ApolloServer({
 });
 
 const secrets = {};
-if (!process.env.IS_OFFLINE) {
+if (config.db.secretName && config.environment !== 'local') {
   secrets.DB_CREDENTIALS = config.DB_SECRET_NAME;
 }
 
